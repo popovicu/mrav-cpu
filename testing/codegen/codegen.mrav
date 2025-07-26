@@ -1,0 +1,8 @@
+xor r1 r1 r1
+addi r1 NOP_ADDR
+xor r2 r2 r2
+addi r2 123
+sw r1 r2
+lw r3 r1
+addi r3 1
+loop: jal r0 loop

@@ -1,0 +1,20 @@
+timer_ctr = 253
+timer_ctrl = 254
+timer_status = 255
+
+xor r1 r1 r1
+addi r1 50
+xor r2 r2 r2
+addi r2 timer_ctr 
+sw r2 r1
+
+addi r2 1 // Timer ctrl address
+xor r1 r1 r1
+addi r1 1
+sw r2 r1 // Start the timer
+
+addi r2 1 // Timer status
+wait: lw r4 r2
+bnz r4 wait
+
+loop: jal r0 loop

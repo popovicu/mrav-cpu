@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package mrav.core;
+
+message CoreState {
+  uint32 pc = 1;
+  repeated uint32 r = 2;
+}

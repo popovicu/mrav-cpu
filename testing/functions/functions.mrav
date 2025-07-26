@@ -1,0 +1,18 @@
+xor r2 r2 r2
+xor r1 r1 r1
+addi r1 100
+jal r15 add
+jal r15 add
+jal r15 add
+jal r15 add
+jal r15 add
+xor r3 r3 r3
+addi r3 3
+xor r4 r4 r4
+addi r4 1
+sub r3 r3 r4
+sub r3 r3 r4
+sub r3 r3 r4
+busy_wait: jal r0 busy_wait
+add: addi r2 1
+jalr r0 r15

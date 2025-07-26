@@ -1,0 +1,42 @@
+xor r1 r1 r1
+addi r1 GPIO_ADDR
+
+// Main blinking loop
+blink_loop:
+    // Turn LEDs ON (0xFE)
+    xor r2 r2 r2
+    addi r2 0xFF
+    sw r1 r2
+
+    jal r15 delay
+
+    // Turn LEDs OFF (0x00)
+    xor r2 r2 r2
+    sw r1 r2
+
+    jal r15 delay
+    jal r0 blink_loop
+
+// Delay function
+// This function provides a delay of approximately 1 second
+// It uses r3 and r4 as loop counters.
+delay:
+    xor r5 r5 r5
+    addi r5 1
+
+    xor r3 r3 r3
+    ldhi r3 0x5D
+    addi r3 0xC0
+
+outer_loop_start:
+    xor r4 r4 r4
+    addi r4 250
+
+inner_loop_start:
+    sub r4 r4 r5
+    bnz r4 inner_loop_start
+
+    sub r3 r3 r5
+    bnz r3 outer_loop_start
+
+    jalr r0 r15

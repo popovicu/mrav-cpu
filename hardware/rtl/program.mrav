@@ -1,0 +1,15 @@
+// We want to write starting from address 1000 (0x03E8)
+
+MEM_START_HI=0x03
+MEM_START_LO=0xE8
+
+xor r1 r1 r1  // r1 = 0
+ldhi r1 MEM_START_HI
+addi r1 MEM_START_LO
+
+xor r2 r2 r2
+ldhi r2 0xBE
+addi r2 0xEF
+
+sw r1 r2
+loop: jal r0 loop

@@ -1,0 +1,5 @@
+xor r1 r1 r1
+addi r1 zero
+addi r1 foo
+addi r1 bar
+loop: jal r0 loop

@@ -1,0 +1,12 @@
+xor r0 r0 r0
+ldhi r2 0x01
+shr r2 8
+ldhi r1 0x0A
+shr r1 8
+loop: add r0 r0 r1
+sub r1 r1 r2
+bnz r1 loop
+xor r3 r3 r3
+ldhi r3 0x04
+sw r3 r0
+forever: jal r10 forever
