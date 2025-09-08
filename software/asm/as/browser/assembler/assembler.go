@@ -22,7 +22,7 @@ func wrapError(err error) js.Value {
 
 	errWrapper := ErrorWrapper{
 		Error:   err.Error(),
-		Details: fmt.Sprintf("%T", err), // Include the error type
+        Details: fmt.Sprintf("%T: %s", err, err.Error()), // Include the error type
 	}
 
 	return js.ValueOf(map[string]interface{}{
