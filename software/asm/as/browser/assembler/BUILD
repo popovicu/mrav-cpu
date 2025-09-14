@@ -16,6 +16,7 @@ go_binary(
     deps = [
         "//software/asm",
         "//software/format",
+        "//software/model",
     ],
 )
 

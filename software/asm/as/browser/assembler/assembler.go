@@ -8,6 +8,7 @@ import (
 
 	"mrav/software/asm"
 	"mrav/software/format"
+	"mrav/software/model"
 )
 
 type ErrorWrapper struct {
@@ -31,9 +32,7 @@ func wrapError(err error) js.Value {
 	})
 }
 
-func assembleModuleHumanReadable(this js.Value, args []js.Value) interface{} {
-	src := args[0].String()
-
+func assembleModule(src string, formatFunc func(*model.MravModule) (interface{}, error)) interface{} {
 	logger := slog.Default()
 	logger.Info("Got the source, moving on to assembling")
 
@@ -43,24 +42,50 @@ func assembleModuleHumanReadable(this js.Value, args []js.Value) interface{} {
 		return wrapError(fmt.Errorf("unable to assemble: %w", err))
 	}
 
-	humanReadable, err := format.HumanReadable(program)
+	output, err := formatFunc(program)
 
 	if err != nil {
 		return wrapError(fmt.Errorf("Cannot output the machine code: %w", err))
 	}
 
-	programOutput := strings.Join(humanReadable, "\n") + "\n"
-
 	logger.Info("Successfully assembled")
 
 	return map[string]interface{}{
-		"data":  programOutput,
+		"data":  output,
 		"error": nil,
 	}
+}
+
+func assembleModuleHumanReadable(this js.Value, args []js.Value) interface{} {
+	src := args[0].String()
+	return assembleModule(src, func(program *model.MravModule) (interface{}, error) {
+		humanReadable, err := format.HumanReadable(program)
+		if err != nil {
+			return nil, err
+		}
+		return strings.Join(humanReadable, "\n") + "\n", nil
+	})
+}
+
+func assembleModuleBinary(this js.Value, args []js.Value) interface{} {
+	src := args[0].String()
+	return assembleModule(src, func(program *model.MravModule) (interface{}, error) {
+		binaryData, err := format.Binary(program)
+		if err != nil {
+			return nil, err
+		}
+		// Convert []byte to []interface{} so js.ValueOf can handle it
+		jsArray := make([]interface{}, len(binaryData))
+		for i, b := range binaryData {
+			jsArray[i] = int(b)
+		}
+		return jsArray, nil
+	})
 }
 
 func main() {
 	c := make(chan struct{})
 	js.Global().Set("assembleModuleHumanReadable", js.FuncOf(assembleModuleHumanReadable))
+	js.Global().Set("assembleModuleBinary", js.FuncOf(assembleModuleBinary))
 	<-c
 }
