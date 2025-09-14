@@ -22,7 +22,7 @@ func wrapError(err error) js.Value {
 
 	errWrapper := ErrorWrapper{
 		Error:   err.Error(),
-        Details: fmt.Sprintf("%T: %s", err, err.Error()), // Include the error type
+		Details: fmt.Sprintf("%T: %s", err, err.Error()), // Include the error type
 	}
 
 	return js.ValueOf(map[string]interface{}{
@@ -31,7 +31,7 @@ func wrapError(err error) js.Value {
 	})
 }
 
-func assembleModule(this js.Value, args []js.Value) interface{} {
+func assembleModuleHumanReadable(this js.Value, args []js.Value) interface{} {
 	src := args[0].String()
 
 	logger := slog.Default()
@@ -61,6 +61,6 @@ func assembleModule(this js.Value, args []js.Value) interface{} {
 
 func main() {
 	c := make(chan struct{})
-	js.Global().Set("assembleModule", js.FuncOf(assembleModule))
+	js.Global().Set("assembleModuleHumanReadable", js.FuncOf(assembleModuleHumanReadable))
 	<-c
 }
