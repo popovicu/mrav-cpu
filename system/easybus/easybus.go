@@ -93,6 +93,10 @@ func (sys *EasyBusSystem) CoreDebug(regsToDump []isa.RegisterId) (string, error)
 	return sys.core.DebugDump(regsToDump)
 }
 
+func (sys *EasyBusSystem) GetCore() *core.Core {
+	return sys.core
+}
+
 func (sys *EasyBusSystem) ProtoCoreDebugFile(filepath string) error {
 	return sys.core.SnapshotToFile(filepath)
 }
