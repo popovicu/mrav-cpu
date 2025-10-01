@@ -66,10 +66,12 @@ func simulateSystem(this js.Value, args []js.Value) interface{} {
 		return wrapError(fmt.Errorf("cannot create system: %w", err))
 	}
 
+	instructionCount := 0
 	for i := 0; i < instructionsToSim; i++ {
 		if err := sys.RunInstruction(); err != nil {
 			return wrapError(fmt.Errorf("cannot run instruction %d: %w", i, err))
 		}
+		instructionCount++
 	}
 
 	// Get the core and build a completely flat map
@@ -79,6 +81,7 @@ func simulateSystem(this js.Value, args []js.Value) interface{} {
 	for i := 0; i < int(isa.RegsNumber); i++ {
 		result[fmt.Sprintf("r%d", i)] = fmt.Sprintf("0x%04x", core.Registers[i])
 	}
+	result["instructions"] = instructionCount
 	result["error"] = nil
 
 	return result
