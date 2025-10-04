@@ -84,6 +84,12 @@ func simulateSystem(this js.Value, args []js.Value) interface{} {
 	result["instructions"] = instructionCount
 	result["error"] = nil
 
+	// Add memory contents to result
+	memBytes := mem.GetMemoryBytes()
+	for i, b := range memBytes {
+		result[fmt.Sprintf("mem_%d", i)] = fmt.Sprintf("0x%02X", b)
+	}
+
 	return result
 }
 

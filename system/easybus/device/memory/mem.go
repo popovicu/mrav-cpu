@@ -60,3 +60,9 @@ func (m *Mem) WriteBus(address isa.BusValue, value isa.BusValue) error {
 
 	return nil
 }
+
+func (m *Mem) GetMemoryBytes() []byte {
+	memCopy := make([]byte, len(m.ram))
+	copy(memCopy, m.ram)
+	return memCopy
+}
