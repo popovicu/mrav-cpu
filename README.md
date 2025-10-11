@@ -12,6 +12,10 @@ The build system used in this project is Bazel, and it covers everything from RT
 
 The name Mrav comes from the author's native language, Serbian, and it means 'ant'. This CPU is tiny like an ant, but capable of doing work. :)
 
+## Try it in browser first!
+
+> :bulb: NEW: Browser-based playground is available at [mrav-playground.popovicu.com](https://mrav-playground.popovicu.com)! Try Mrav in the browser first to see if you like it, no downloads required.
+
 ## Remote dependency
 
 If you don't want to vendor this code into your codebase, you can depend on this repository as a remote dependency in Bazel by using `bazel_dep` in your `MODULE.bazel`. However, because `mrav-cpu` is currently not tracked in the Bazel registry system, you also need to add an explicit Git pointer to this repository, like this:
@@ -30,28 +34,48 @@ There are 16 instructions in the Mrav ISA, and each instruction is 16 bits. The 
 
 The highest 4 bits encode the instruction. The next 4 bits encode the destination register. The final 8 bits may either be two source register IDs, an 8-bit immediate value, a source register ID + 4 unused bits, or an immediate 4-bit value + 4 unused bits.
 
-Preview from `//isa/isa.go`:
-
-```go
-//     Add: 0, // 0x0, add rd rs1 rs2
-//     Sub: 1, // 0x1, sub rd rs1 rs2
-//     Lw: 2, // 0x2, lw rd rs1 xxxx
-//     Sw: 3, // 0x3, sw rd rs1 xxxx
-//     Xor: 4, // 0x4, xor rd rs1 rs2
-//     And: 5, // 0x5, and rd rs1 rs2
-//     Or: 6, // 0x6, or rd rs1 rs2
-//     Addi: 7, // 0x7, addi rd imm8
-//     Ldhi: 8, // 0x8, ldhi rd imm8
-//     Bz: 9, // 0x9, bz rd imm8
-//     Bnz: 10, // 0xA, bnz rd imm8
-//     Jal: 11, // 0xB, jal rd imm8
-//     Jalr: 12, // 0xC, jalr rd rs1 xxxx
-//     Shl: 13, // 0xD, shl rd imm4 xxxx
-//     Shr: 14, // 0xE, shr rd imm4 xxxx
-//     Shra: 15, // 0xF, shra rd imm4 xxxx
+```
+╔════════════════════════════════════════════════════════════════════╗
+║                      MRAV CPU INSTRUCTION SET                      ║
+║                         16 Instructions                            ║
+╠════════════════════════════════════════════════════════════════════╣
+║ ARITHMETIC & LOGIC                                                 ║
+║  add  rd rs1 rs2    Add rs1 + rs2 → rd                             ║
+║  sub  rd rs1 rs2    Subtract rs1 - rs2 → rd                        ║
+║  xor  rd rs1 rs2    XOR rs1 ^ rs2 → rd                             ║
+║  and  rd rs1 rs2    AND rs1 & rs2 → rd                             ║
+║  or   rd rs1 rs2    OR rs1 | rs2 → rd                              ║
+║  addi rd imm8       Add immediate rd + imm8 → rd                   ║
+╠════════════════════════════════════════════════════════════════════╣
+║ MEMORY ACCESS                                                      ║
+║  lw   rd rs1        Load word from [rs1] → rd                      ║
+║  sw   rd rs1        Store word rd → [rs1]                          ║
+╠════════════════════════════════════════════════════════════════════╣
+║ IMMEDIATE LOAD                                                     ║
+║  ldhi rd imm8       Load high immediate imm8 → rd[15:8]            ║
+╠════════════════════════════════════════════════════════════════════╣
+║ BRANCHES (absolute addressing)                                     ║
+║  bz   rd imm8       Branch if rd == 0 to address imm8              ║
+║  bnz  rd imm8       Branch if rd != 0 to address imm8              ║
+╠════════════════════════════════════════════════════════════════════╣
+║ JUMPS                                                              ║
+║  jal  rd imm8       Jump to imm8, save return addr → rd            ║
+║  jalr rd rs1        Jump to [rs1], save return addr → rd           ║
+╠════════════════════════════════════════════════════════════════════╣
+║ SHIFTS                                                             ║
+║  shl  rd imm4       Shift left rd << imm4 → rd                     ║
+║  shr  rd imm4       Shift right (logical) rd >> imm4 → rd          ║
+║  shra rd imm4       Shift right (arithmetic) rd >> imm4 → rd       ║
+╠════════════════════════════════════════════════════════════════════╣
+║ NOTES:                                                             ║
+║  • 16-bit instruction width, 16-bit data width                     ║
+║  • 16 general purpose registers (r0-r15)                           ║
+║  • imm8 = 8-bit immediate, imm4 = 4-bit immediate                  ║
+║  • Branch/jump immediates are absolute addresses                   ║
+╚════════════════════════════════════════════════════════════════════╝
 ```
 
-Full description is at [the ISA doc](/docs/isa.md)
+Additional description is at [the ISA doc](/docs/isa.md)
 
 > :warning: Reiterating from the top: the ISA is subject to change. The author is well aware that this ISA is suboptimal in many ways.
 
